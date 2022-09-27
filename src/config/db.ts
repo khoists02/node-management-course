@@ -1,9 +1,10 @@
 import { Sequelize } from "sequelize"
-
-const sequelize = new Sequelize('test', 'root', 'Minhkhoi93!@#', {
-    dialect: 'mysql',
-    host: 'localhost',
-    port: 3306
+const DATABASE_NAME = process.env.DATABASE_NAME;
+const PASSWORD = process.env.DATABASE_PASSWORD;
+const USER = process.env.DATABASE_USER;
+const sequelize = new Sequelize(DATABASE_NAME, USER, PASSWORD, {
+    dialect: "mysql",
+    host: "db"
   });
   
 export { sequelize }
