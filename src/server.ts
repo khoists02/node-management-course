@@ -10,8 +10,11 @@ const cors = require("cors");
 const app: Application = express();
 import Router from "./routes/router";
 
+// parse application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, "public")));
+
+// parse application/json
+app.use(bodyParser.json());
 app.use(cors());
 
 sequelize
