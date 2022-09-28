@@ -1,23 +1,26 @@
-require('dotenv').config({ path: ".env" });
-import { NextFunction, Request, Response } from "express";
-import { sequelize } from "./config/db";
-
-const path = require('path');
+require("dotenv").config({ path: ".env" });
+import { Application } from "express";
+import sequelize from "./config/db";
+import User from "./dto/users.dto";
+import { v4 as uuidv4 } from "uuid";
+const path = require("path");
 const express = require("express");
 const bodyParser = require("body-parser");
-const app = express();
+const cors = require("cors");
+const app: Application = express();
+import Router from "./routes/router";
 
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, "public")));
+app.use(cors());
 
-app.get('/', (req: Request, res: Response) => {
-    res.send('hello world')
+sequelize
+  .sync()
+  .then((async) => {
+    app.use("/", Router.init());
+    app.listen(5000);
   })
-
-sequelize.sync().then(() => {
-    console.info("Connect db success !!!");
-    console.info("Open port 3000 for application !!!");
-    app.listen(3000);
-}).catch((err) => {
-    console.error("connect error with ", err)
-})
+  .catch((err) => {
+    console.log("sync database err", err);
+    process.exit();
+  });

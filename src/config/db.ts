@@ -1,10 +1,16 @@
-import { Sequelize } from "sequelize"
-const DATABASE_NAME = process.env.DATABASE_NAME;
-const PASSWORD = process.env.DATABASE_PASSWORD;
-const USER = process.env.DATABASE_USER;
-const sequelize = new Sequelize(DATABASE_NAME, USER, PASSWORD, {
-    dialect: "mysql",
-    host: "db"
-  });
-  
-export { sequelize }
+import { Dialect } from "sequelize";
+import { Sequelize } from "sequelize-typescript";
+const path = require("path");
+
+const dbName = process.env.DB_NAME as string;
+const dbUser = process.env.DB_USER as string;
+const dbHost = process.env.DB_HOST;
+const dbDriver = process.env.DB_DRIVER as Dialect;
+const dbPassword = process.env.DB_PASSWORD;
+const sequelizeConnection = new Sequelize(dbName, dbUser, dbPassword, {
+  dialect: dbDriver as Dialect,
+  port: 5439,
+  models: [`${path.join(__dirname, "../", "dto")}` + "\\*.dto.js"],
+});
+
+export default sequelizeConnection;
