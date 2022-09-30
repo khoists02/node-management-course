@@ -291,4 +291,17 @@ export const ERROR = {
     message: "The username already exists",
     code: 2800,
   },
+  // Roles
+  ERROR_ROLE_CREATE: {
+    message: "Create role failed.",
+    code: 2801,
+  },
+  ERROR_ROLE_NAME_NULL: {
+    message: "Create role failed. Role name can not be blank.",
+    code: 2802,
+  },
+  ERROR_USER_PASSWORD_COMPARE_WRONG: {
+    message: "Password compare can't the same the password .",
+    code: 2803,
+  },
 };

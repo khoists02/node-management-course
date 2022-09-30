@@ -1,0 +1,16 @@
+{
+  "development": {
+    "username": "advax",
+    "password": "advax",
+    "database": "nodedb",
+    "host": "localhost",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "advax",
+    "password": "advax",
+    "database": "nodedb",
+    "host": "localhost",
+    "dialect": "postgres"
+  }
+}

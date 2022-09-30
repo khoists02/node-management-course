@@ -11,6 +11,9 @@ import {
 } from "sequelize-typescript";
 import bcrypt from "bcrypt";
 import { hashPassword } from "../helpers/index";
+import ApplicationError from "../errors/ApplicationError";
+import { ERROR } from "../helpers/errors";
+import Roles from "./roles.dto";
 
 type UserAttribute = {
   id: string;
@@ -18,6 +21,7 @@ type UserAttribute = {
   password: string;
   passwordCompare: string;
   email: string;
+  roles?: Roles[];
 };
 
 @Table({ tableName: "users" })
@@ -57,7 +61,8 @@ export class User extends Model<UserAttribute> {
       user.passwordCompare,
       user.password
     );
-    if (!decryptPassword) throw new Error("Compare password failed !!!");
+    if (!decryptPassword)
+      throw new ApplicationError(ERROR.ERROR_USER_PASSWORD_COMPARE_WRONG);
 
     user.passwordCompare = user.password;
   }

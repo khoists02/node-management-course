@@ -1,6 +1,6 @@
 import { DataTypeAbstract, ModelAttributeColumnOptions } from "sequelize";
 import * as express from "express";
-import { UserResponse } from "./models/users";
+import { UserResponse } from "../models/users";
 
 declare global {
   type SequelizeAttributes<T extends { [key: string]: any }> = {

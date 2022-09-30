@@ -4,7 +4,7 @@
   "description": "Management user API",
   "main": "index.ts",
   "scripts": {
-    "start:dev": "nodemon",
+    "dev": "nodemon",
     "build": "rimraf ./dist && tsc",
     "start": "npm run build && node dist/server.js"
   },
