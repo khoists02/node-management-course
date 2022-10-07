@@ -23,7 +23,7 @@ type ArticleInformationAttribute = {
 };
 
 @Table({ tableName: "article-information", timestamps: false })
-export default class ArticleInformation extends Model<ArticleInformationAttribute> {
+class ArticleInformation extends Model<ArticleInformationAttribute> {
   @PrimaryKey
   @AllowNull(false)
   @Column(DataType.UUID)
@@ -56,3 +56,5 @@ export default class ArticleInformation extends Model<ArticleInformationAttribut
   @Column(DataType.UUID)
   articleId: string;
 }
+
+export default ArticleInformation;

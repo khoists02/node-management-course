@@ -7,19 +7,29 @@ import { ERROR } from "../../helpers/errors";
 import { Request } from "express";
 import ApplicationError from "../../errors/ApplicationError";
 import Roles from "../../dto/roles.dto";
+import UserRoles from "../../dto/users_roles.dto";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
 class AuthenticationService {
   async register(user: UserModel) {
     try {
-      return await User.create({
+      const data = {
         id: uuidv4(),
         name: user.name as string,
         password: user.password as string,
         passwordCompare: user.passwordCompare as string,
         email: user.email as string,
-      });
+        role: [
+          {
+            name: "admin",
+          },
+        ],
+      } as any;
+      const newUser = await User.create(data, { include: [Roles] });
+      return {
+        user: newUser,
+      };
     } catch (error) {
       throw new ApplicationError(error);
     }
@@ -49,8 +59,12 @@ class AuthenticationService {
     const user = req.user as UserResponse;
 
     if (!user) throw new AuthenticationError(ERROR.ERROR_TENANT_USER_NOT_FOUND);
-
-    return await User.findByPk(user.id);
+    const ourUser = await User.findOne({
+      where: { id: user.id },
+      include: Roles,
+    });
+    console.log(ourUser.toJSON());
+    return ourUser;
   }
 }
 

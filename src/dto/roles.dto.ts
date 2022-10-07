@@ -6,11 +6,14 @@ import {
   Table,
   AllowNull,
   Unique,
+  BelongsToMany,
 } from "sequelize-typescript";
+import User from "./users.dto";
+import UserRoles from "./users_roles.dto";
+
 type RolesAttribute = {
   id: string;
   name: string;
-  userId: string;
 };
 
 @Table({ tableName: "roles", timestamps: false })
@@ -23,4 +26,7 @@ export default class Roles extends Model<RolesAttribute> {
   @AllowNull(false)
   @Column(DataType.STRING)
   public name: string;
+
+  @BelongsToMany(() => User, () => UserRoles)
+  public users!: User[];
 }

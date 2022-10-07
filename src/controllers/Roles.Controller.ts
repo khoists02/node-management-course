@@ -4,13 +4,21 @@ import { RoleRequest } from "../models/roles";
 
 class RolesController {
   async getRoleById(req: Request, res: Response) {
-    const data = await RolesService.getRole(req.params["roleId"]);
-    res.status(200).send({ data });
+    try {
+      const data = await RolesService.getRole(req.params["roleId"]);
+      res.status(200).send({ data });
+    } catch (error) {
+      res.status(500).send({ error });
+    }
   }
 
   async getRoles(req: Request, res: Response) {
-    const data = await RolesService.getRoles();
-    res.status(200).send({ data });
+    try {
+      const data = await RolesService.getRoles();
+      res.status(200).send({ data });
+    } catch (error) {
+      res.send({ error });
+    }
   }
 
   async createRole(req: Request, res: Response) {

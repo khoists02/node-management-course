@@ -6,6 +6,7 @@ import { ERROR } from "../../helpers/errors";
 import AuthenticationError from "../../errors/AuthenticationError";
 import UserRoles from "../../dto/users_roles.dto";
 import { getFunctionPromiseMapping } from "../../helpers";
+
 class RolesService {
   async getRoles() {
     return await Roles.findAll();
@@ -45,25 +46,23 @@ class RolesService {
 
   async deleteRole() {}
 
-  async setDefaultRole(userId: string, nameRole: string) {
-    try {
-      const findRole = await Roles.findOne({ where: { name: nameRole } });
-      if (!findRole)
-        throw new AuthenticationError(
-          ERROR.ERROR_ACCOUNT_KEYCLOAK_REQUEST_FAILED
-        );
+  // async setDefaultRole(userId: string, nameRole: string) {
+  //   try {
+  //     const findRole = await Roles.findOne({ where: { name: nameRole } });
+  //     if (!findRole)
+  //       return await Roles.create({ id: uuidv4(), name: "writer" });
 
-      await UserRoles.create({
-        id: uuidv4(),
-        userId,
-        roleId: findRole.id,
-      });
+  //     await UserRoles.create({
+  //       id: uuidv4(),
+  //       userId,
+  //       roleId: findRole.id,
+  //     });
 
-      return findRole.name;
-    } catch (error) {
-      throw new AuthenticationError(error);
-    }
-  }
+  //     return findRole.name;
+  //   } catch (error) {
+  //     throw new AuthenticationError(error);
+  //   }
+  // }
 
   async getNameRoleById(roleId: string) {
     try {
@@ -80,16 +79,17 @@ class RolesService {
   }
   async findAllRoleByUserId(userId: string) {
     try {
-      const usersRoles = await UserRoles.findAll({ where: { userId: userId } });
-      const roleIds = usersRoles.map((x) => x.roleId);
-      const promiseItems = roleIds.map((roleId) => {
-        const rolePromise = Roles.findByPk(roleId);
-        return rolePromise;
-      });
-      const rolesPromise = await getFunctionPromiseMapping(promiseItems);
-      return roleIds.map((item, index) => {
-        return rolesPromise[index]?.name;
-      });
+      // const usersRoles = await UserRoles.findAll({ where: { userId: userId } });
+      // const roleIds = usersRoles.map((x) => x.roleId);
+      // const promiseItems = roleIds.map((roleId) => {
+      //   const rolePromise = Roles.findByPk(roleId);
+      //   return rolePromise;
+      // });
+      // const rolesPromise = await getFunctionPromiseMapping(promiseItems);
+      // return roleIds.map((item, index) => {
+      //   return rolesPromise[index]?.name;
+      // });
+      return [] as any;
     } catch (error) {
       throw new ApplicationError(error);
     }

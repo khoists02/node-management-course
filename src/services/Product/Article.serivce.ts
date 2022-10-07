@@ -60,6 +60,22 @@ class ArticleService {
       throw new AuthenticationError(error);
     }
   }
+
+  async getArticleDetail(id: string) {
+    try {
+      return await Articles.findByPk(id);
+    } catch (error) {
+      throw new ApplicationError(error);
+    }
+  }
+
+  async getInformationByArticleId(id: string) {
+    try {
+      return await ArticleInformation.findOne({ where: { articleId: id } });
+    } catch (error) {
+      throw new ApplicationError(error);
+    }
+  }
 }
 
 export default new ArticleService();

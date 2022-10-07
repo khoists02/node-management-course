@@ -10,9 +10,8 @@ import RolesService from "../services/Auth/Roles.Service";
 class AuthController {
   async register(req: Request, res: Response) {
     const body = req.body as UserModel;
-    const user = await AuthenticationService.register(body);
-    const role = await RolesService.setDefaultRole(user.id, "writer");
-    res.send({ user, role });
+    const data = await AuthenticationService.register(body);
+    res.send({ data });
     try {
     } catch (error) {
       res.send({ error });
@@ -63,13 +62,13 @@ class AuthController {
         throw new ApplicationError(
           ERROR.ERROR_ACCOUNT_KEYCLOAK_CONNECTION_REFUSED
         );
-      const roles = await RolesService.findAllRoleByUserId(user.id);
+      // const roles = await RolesService.findAllRoleByUserId(user.id);
       res.status(HttpStatus.OK).send({
-        user: {
+        data: {
           id: user.id,
           username: user.name,
           email: user.email,
-          roles,
+          // roles,
         },
       });
     } catch (error) {

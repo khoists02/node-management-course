@@ -8,7 +8,7 @@ router.get(
   AuthController.authenticatedUser
 );
 router.post("/auth/login", AuthController.login);
-router.post("/auth/logout", AuthController.logout);
+router.post("/auth/logout", authenticate, AuthController.logout);
 router.post("/auth/register", AuthController.register);
 
 export default router;

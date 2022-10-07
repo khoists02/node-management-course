@@ -8,12 +8,14 @@ import {
   Unique,
   BeforeSave,
   Validate,
+  BelongsToMany,
 } from "sequelize-typescript";
 import bcrypt from "bcrypt";
 import { hashPassword } from "../helpers/index";
 import ApplicationError from "../errors/ApplicationError";
 import { ERROR } from "../helpers/errors";
 import Roles from "./roles.dto";
+import UserRoles from "./users_roles.dto";
 
 type UserAttribute = {
   id: string;
@@ -21,7 +23,6 @@ type UserAttribute = {
   password: string;
   passwordCompare: string;
   email: string;
-  roles?: Roles[];
 };
 
 @Table({ tableName: "users" })
@@ -48,6 +49,9 @@ export class User extends Model<UserAttribute> {
   @Validate({ isEmail: true })
   @Column(DataType.STRING)
   public email: string;
+
+  @BelongsToMany(() => Roles, () => UserRoles)
+  public roles!: Roles[];
 
   @BeforeSave
   static async hashPasswordBeforeUpdate(user: User) {

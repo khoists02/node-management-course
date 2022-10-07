@@ -5,6 +5,7 @@ import {
   Model,
   Table,
   AllowNull,
+  Default,
   ForeignKey,
 } from "sequelize-typescript";
 import Roles from "./roles.dto";
@@ -16,20 +17,19 @@ type UsersRolesAttribute = {
   roleId: string;
 };
 
-@Table({ tableName: "users_roles", timestamps: false })
+@Table({ tableName: "users-roles", timestamps: false })
 export default class UserRoles extends Model<UsersRolesAttribute> {
   @PrimaryKey
   @AllowNull(false)
+  @Default(DataType.UUID)
   @Column(DataType.UUID)
   public id: string;
 
   @ForeignKey(() => User)
-  @AllowNull(false)
   @Column(DataType.UUID)
   public userId: string;
 
   @ForeignKey(() => Roles)
-  @AllowNull(false)
   @Column(DataType.UUID)
   public roleId: string;
 }
