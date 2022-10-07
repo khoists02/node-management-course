@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from "uuid";
 import jwt, { Secret } from "jsonwebtoken";
 import { UserModel, UserResponse } from "../../models/users";
 import User from "../../dto/users.dto";
@@ -7,7 +6,6 @@ import { ERROR } from "../../helpers/errors";
 import { Request } from "express";
 import ApplicationError from "../../errors/ApplicationError";
 import Roles from "../../dto/roles.dto";
-import UserRoles from "../../dto/users_roles.dto";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
@@ -15,22 +13,29 @@ class AuthenticationService {
   async register(user: UserModel) {
     try {
       const data = {
-        id: uuidv4(),
         name: user.name as string,
         password: user.password as string,
         passwordCompare: user.passwordCompare as string,
         email: user.email as string,
-        role: [
+        roles: [
           {
             name: "admin",
           },
         ],
       } as any;
-      const newUser = await User.create(data, { include: [Roles] });
+      const newUser = await User.create(data, {
+        include: [
+          {
+            model: Roles,
+            as: "roles",
+          },
+        ],
+      });
       return {
         user: newUser,
       };
     } catch (error) {
+      console.log({ error });
       throw new ApplicationError(error);
     }
   }
@@ -63,9 +68,20 @@ class AuthenticationService {
       where: { id: user.id },
       include: Roles,
     });
-    console.log(ourUser.toJSON());
     return ourUser;
   }
+
+  // async deleteUser(req: Request) {
+  //   // @ts-ignore
+  //   const user = req.user as UserResponse;
+
+  //   if (!user) throw new AuthenticationError(ERROR.ERROR_TENANT_USER_NOT_FOUND);
+  //   const ourUser = await User.destroy({
+  //     where: { id: user.id },
+  //     include: Roles,
+  //   });
+  //   return ourUser;
+  // }
 }
 
 export default new AuthenticationService();

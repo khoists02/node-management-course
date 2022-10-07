@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   PrimaryKey,
   Column,
@@ -7,9 +8,8 @@ import {
   AllowNull,
   Unique,
   BelongsToMany,
+  Default,
 } from "sequelize-typescript";
-import User from "./users.dto";
-import UserRoles from "./users_roles.dto";
 
 type RolesAttribute = {
   id: string;
@@ -19,6 +19,7 @@ type RolesAttribute = {
 @Table({ tableName: "roles", timestamps: false })
 export default class Roles extends Model<RolesAttribute> {
   @PrimaryKey
+  @Default(uuidv4())
   @Column(DataType.UUID)
   public id: string;
 
@@ -26,7 +27,4 @@ export default class Roles extends Model<RolesAttribute> {
   @AllowNull(false)
   @Column(DataType.STRING)
   public name: string;
-
-  @BelongsToMany(() => User, () => UserRoles)
-  public users!: User[];
 }

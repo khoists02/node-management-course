@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   PrimaryKey,
   Column,
@@ -9,6 +10,7 @@ import {
   BeforeSave,
   Validate,
   BelongsToMany,
+  Default,
 } from "sequelize-typescript";
 import bcrypt from "bcrypt";
 import { hashPassword } from "../helpers/index";
@@ -23,12 +25,14 @@ type UserAttribute = {
   password: string;
   passwordCompare: string;
   email: string;
+  roles: Roles[];
 };
 
 @Table({ tableName: "users" })
 export class User extends Model<UserAttribute> {
   @PrimaryKey
   @AllowNull(false)
+  @Default(uuidv4())
   @Column(DataType.UUID)
   public id: string;
 

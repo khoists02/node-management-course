@@ -1,6 +1,5 @@
 import { Dialect } from "sequelize";
-import { Sequelize } from "sequelize-typescript";
-import UserRoles from "../dto/users_roles.dto";
+import { DataType, Sequelize } from "sequelize-typescript";
 import {
   User,
   UsersRoles,
@@ -33,5 +32,16 @@ sequelizeConnection.addModels([
   Articles,
   ArticleInformation,
 ]);
+
+UsersRoles.belongsTo(Roles, {
+  as: "Roles",
+  foreignKey: "roleId",
+  keyType: DataType.UUID,
+});
+UsersRoles.belongsTo(User, {
+  as: "User",
+  foreignKey: "userId",
+  keyType: DataType.UUID,
+});
 
 export default sequelizeConnection;

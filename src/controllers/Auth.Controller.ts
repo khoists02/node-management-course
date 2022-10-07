@@ -5,14 +5,13 @@ import AuthenticationService from "../services/Auth/Authentication.service";
 import bcrypt from "bcrypt";
 import ApplicationError from "../errors/ApplicationError";
 import { ERROR } from "../helpers/errors";
-import RolesService from "../services/Auth/Roles.Service";
 
 class AuthController {
   async register(req: Request, res: Response) {
-    const body = req.body as UserModel;
-    const data = await AuthenticationService.register(body);
-    res.send({ data });
     try {
+      const body = req.body as UserModel;
+      const data = await AuthenticationService.register(body);
+      res.send({ data });
     } catch (error) {
       res.send({ error });
     }
@@ -62,17 +61,14 @@ class AuthController {
         throw new ApplicationError(
           ERROR.ERROR_ACCOUNT_KEYCLOAK_CONNECTION_REFUSED
         );
-      // const roles = await RolesService.findAllRoleByUserId(user.id);
       res.status(HttpStatus.OK).send({
-        data: {
-          id: user.id,
-          username: user.name,
-          email: user.email,
-          // roles,
-        },
+        id: user.id,
+        username: user.name,
+        email: user.email,
+        roles: user.roles.map((x) => x.name),
       });
     } catch (error) {
-      res.send({ error });
+      res.status(500).send({ error });
     }
   }
 }

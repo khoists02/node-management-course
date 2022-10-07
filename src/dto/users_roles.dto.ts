@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   PrimaryKey,
   Column,
@@ -7,6 +8,7 @@ import {
   AllowNull,
   Default,
   ForeignKey,
+  BeforeSave,
 } from "sequelize-typescript";
 import Roles from "./roles.dto";
 import User from "./users.dto";
@@ -21,7 +23,7 @@ type UsersRolesAttribute = {
 export default class UserRoles extends Model<UsersRolesAttribute> {
   @PrimaryKey
   @AllowNull(false)
-  @Default(DataType.UUID)
+  @Default(uuidv4())
   @Column(DataType.UUID)
   public id: string;
 
@@ -32,4 +34,9 @@ export default class UserRoles extends Model<UsersRolesAttribute> {
   @ForeignKey(() => Roles)
   @Column(DataType.UUID)
   public roleId: string;
+
+  @BeforeSave
+  static async autoGenerateUUID(usersRoles: UserRoles) {
+    usersRoles.id = uuidv4();
+  }
 }
