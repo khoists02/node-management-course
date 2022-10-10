@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ArticleRequest } from "../models/article";
 import { UserResponse } from "../models/users";
-import ArticleSerivce from "../services/Product/Article.serivce";
+import ArticleSerivce from "../services/Product/Article.service";
 
 class ArticlesController {
   async createArticle(req: Request, res: Response) {
