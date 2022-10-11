@@ -5,7 +5,7 @@ import AuthenticationError from "../../errors/AuthenticationError";
 import { ERROR } from "../../helpers/errors";
 import { Request } from "express";
 import ApplicationError from "../../errors/ApplicationError";
-import Roles from "../../dto/roles.dto";
+import UserRoles from "../../dto/user-roles.dto";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY;
 
@@ -14,25 +14,27 @@ class AuthenticationService {
     try {
       const data = {
         name: user.name as string,
+        username: user.username as string,
         password: user.password as string,
-        passwordCompare: user.passwordCompare as string,
+        passwordcompare: user.passwordcompare as string,
         email: user.email as string,
-        roles: [
-          {
-            name: "admin",
-          },
-        ],
+        // roles: [
+        //   {
+        //     name: "admin",
+        //   },
+        // ],
       } as any;
-      const newUser = await User.create(data, {
-        include: [
-          {
-            model: Roles,
-            as: "roles",
-          },
-        ],
-      });
+      const response = await User.create(data);
+      // const newUser = await User.create(data, {
+      //   include: [
+      //     {
+      //       model: Roles,
+      //       as: "roles",
+      //     },
+      //   ],
+      // });
       return {
-        user: newUser,
+        user: response,
       };
     } catch (error) {
       console.log({ error });
@@ -41,7 +43,7 @@ class AuthenticationService {
   }
 
   async getUserByUserName(username: string) {
-    return await User.findOne({ where: { name: username } });
+    return await User.findOne({ where: { username, enabled: true } });
   }
 
   async getToken(user?: UserModel) {
@@ -62,26 +64,39 @@ class AuthenticationService {
   async authenticatedUser(req: Request) {
     // @ts-ignore
     const user = req.user as UserResponse;
-
-    if (!user) throw new AuthenticationError(ERROR.ERROR_TENANT_USER_NOT_FOUND);
-    const ourUser = await User.findOne({
-      where: { id: user.id },
-      include: Roles,
-    });
+    if (!user) throw new AuthenticationError(ERROR.ERROR_UNAUTHORISED);
+    const ourUser = await User.findByPk(user.id);
     return ourUser;
   }
 
-  // async deleteUser(req: Request) {
-  //   // @ts-ignore
-  //   const user = req.user as UserResponse;
+  async deleteUser(id: string) {
+    try {
+      await User.destroy({ where: { id } });
+    } catch (error) {
+      throw new AuthenticationError(error);
+    }
+  }
 
-  //   if (!user) throw new AuthenticationError(ERROR.ERROR_TENANT_USER_NOT_FOUND);
-  //   const ourUser = await User.destroy({
-  //     where: { id: user.id },
-  //     include: Roles,
-  //   });
-  //   return ourUser;
-  // }
+  async updateRolesForUser(userId: string, roleIds?: string[]) {
+    try {
+      const updatedUser = await User.findByPk(userId);
+      if (!updatedUser)
+        throw new AuthenticationError(ERROR.ERROR_USER_NAME_EXIST);
+      if (!roleIds || roleIds.length === 0)
+        throw new AuthenticationError(ERROR.ERROR_USER_NAME_EXIST);
+      const userRolesIds = roleIds.map((roleId) => {
+        return {
+          role_id: roleId,
+          user_id: userId,
+        };
+      });
+      userRolesIds.forEach(async (userRole) => {
+        await UserRoles.create(userRole);
+      });
+    } catch (error) {
+      throw new AuthenticationError(error);
+    }
+  }
 }
 
 export default new AuthenticationService();

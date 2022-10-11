@@ -1,8 +1,9 @@
 export interface UserModel {
   id?: string;
+  username?: string;
   name?: string;
   password?: string;
-  passwordCompare?: string;
+  passwordcompare?: string;
   email?: string;
   roleIds?: string[];
 }
@@ -10,5 +11,5 @@ export interface UserModel {
 export interface UserResponse {
   id?: string;
   username?: string;
-  email?: string;
+  name?: string;
 }

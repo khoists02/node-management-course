@@ -5,15 +5,16 @@ import AuthenticationService from "../services/Auth/Authentication.service";
 import bcrypt from "bcrypt";
 import ApplicationError from "../errors/ApplicationError";
 import { ERROR } from "../helpers/errors";
+import AuthenticationError from "../errors/AuthenticationError";
 
 class AuthController {
   async register(req: Request, res: Response) {
     try {
       const body = req.body as UserModel;
       const data = await AuthenticationService.register(body);
-      res.send({ data });
+      res.status(201).send({ data });
     } catch (error) {
-      res.send({ error });
+      res.status(500).send({ error });
     }
   }
 
@@ -25,7 +26,7 @@ class AuthController {
         throw new ApplicationError(ERROR.ERROR_ACCOUNT_KEYCLOAK_INVALID_GRANT);
 
       const findUser = await AuthenticationService.getUserByUserName(
-        user.name as string
+        user.username as string
       );
 
       if (!findUser) throw new ApplicationError(ERROR.ERROR_USER_NAME_EXIST);
@@ -41,7 +42,12 @@ class AuthController {
             error: "Password is wrong!!",
           },
         });
-      const token = await AuthenticationService.getToken(findUser as UserModel);
+
+      const token = await AuthenticationService.getToken({
+        id: findUser.id,
+        name: findUser.name,
+        username: findUser.username,
+      } as UserModel);
       res.status(HttpStatus.OK).send({ token });
     } catch (error) {
       res.send({ error });
@@ -57,16 +63,33 @@ class AuthController {
   async authenticatedUser(req: Request, res: Response) {
     try {
       const user = await AuthenticationService.authenticatedUser(req);
-      if (!user)
-        throw new ApplicationError(
-          ERROR.ERROR_ACCOUNT_KEYCLOAK_CONNECTION_REFUSED
-        );
-      res.status(HttpStatus.OK).send({
+      res.status(200).send({
         id: user.id,
+        name: user.name,
         username: user.name,
         email: user.email,
-        roles: user.roles.map((x) => x.name),
       });
+    } catch (error) {
+      res.send({ error });
+    }
+  }
+
+  async deleteUser(req: Request, res: Response) {
+    try {
+      await AuthenticationService.deleteUser(req.params.id);
+      res.status(200).send("OK");
+    } catch (error) {
+      res.status(500).send({ error });
+    }
+  }
+
+  async updateRolesForUser(req: Request, res: Response) {
+    try {
+      await AuthenticationService.updateRolesForUser(
+        req.body.userId,
+        req.body.roleIds as string[]
+      );
+      res.status(200).send("OK");
     } catch (error) {
       res.status(500).send({ error });
     }

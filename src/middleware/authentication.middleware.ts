@@ -10,22 +10,20 @@ export const authenticate = async (
   next: NextFunction
 ) => {
   const bearerToken: string | undefined = req.headers.authorization;
-  if (!bearerToken) throw new AuthenticationError(ERROR.ERROR_UNAUTHORISED);
+  if (!bearerToken) {
+    return next();
+  }
   const token = bearerToken.replace("Bearer ", "");
   if (!token) throw new AuthenticationError(ERROR.ERROR_INVALID_TOKEN);
-  try {
-    const user: UserModel = await AuthenticationService.verifyToken(token);
-    if (user) {
-      const userResponse: UserResponse = {
-        username: user.name,
-        email: user.email,
-        id: user.id,
-      };
-      // @ts-ignore
-      req.user = userResponse;
-    }
-  } catch (error) {
-    return next(error);
+  const user: UserModel = await AuthenticationService.verifyToken(token);
+  if (user) {
+    const userResponse: UserResponse = {
+      name: user.name,
+      username: user.name,
+      id: user.id,
+    };
+    // @ts-ignore
+    req.user = userResponse;
   }
   return next();
 };

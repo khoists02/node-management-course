@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from "uuid";
 import {
   PrimaryKey,
   Column,
@@ -6,37 +7,32 @@ import {
   Table,
   AllowNull,
   ForeignKey,
-  BeforeSave,
+  Default,
 } from "sequelize-typescript";
 import Permissions from "./permission.dto";
 import Roles from "./roles.dto";
-import { v4 as uuidv4 } from "uuid";
 
-type RolesPermissionsAttribute = {
+type RolePermissionsAttributes = {
   id: string;
-  roleId: string;
-  permissionId: string;
+  role_id: string;
+  user_id: string;
 };
 
-@Table({ tableName: "roles_permissions", timestamps: false })
-export default class RolesPermissions extends Model<RolesPermissionsAttribute> {
+@Table({ tableName: "role_permissions", timestamps: false })
+export default class RolesPermissions extends Model<RolePermissionsAttributes> {
   @PrimaryKey
   @AllowNull(false)
+  @Default(uuidv4())
   @Column(DataType.UUID)
   public id: string;
 
   @ForeignKey(() => Roles)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public roleId: string;
+  public role_id: string;
 
   @ForeignKey(() => Permissions)
   @AllowNull(false)
   @Column(DataType.UUID)
-  public permissionId: string;
-
-  @BeforeSave
-  static generateUUID(item: RolesPermissions) {
-    item.id = uuidv4();
-  }
+  public user_id: string;
 }

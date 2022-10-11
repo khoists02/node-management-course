@@ -14,6 +14,7 @@ import {
 type RolesAttribute = {
   id: string;
   name: string;
+  description?: string;
 };
 
 @Table({ tableName: "roles", timestamps: false })
@@ -27,4 +28,7 @@ export default class Roles extends Model<RolesAttribute> {
   @AllowNull(false)
   @Column(DataType.STRING)
   public name: string;
+
+  @Column(DataType.STRING)
+  public description!: string;
 }

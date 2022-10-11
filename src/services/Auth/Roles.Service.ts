@@ -4,7 +4,7 @@ import Roles from "../../dto/roles.dto";
 import ApplicationError from "../../errors/ApplicationError";
 import { ERROR } from "../../helpers/errors";
 import AuthenticationError from "../../errors/AuthenticationError";
-import UserRoles from "../../dto/users_roles.dto";
+import UserRoles from "../../dto/user-roles.dto";
 import { getFunctionPromiseMapping } from "../../helpers";
 
 class RolesService {

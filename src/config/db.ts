@@ -2,7 +2,7 @@ import { Dialect } from "sequelize";
 import { DataType, Sequelize } from "sequelize-typescript";
 import {
   User,
-  UsersRoles,
+  UserRoles,
   UsersArticles,
   RolesPermissions,
   Roles,
@@ -25,7 +25,7 @@ const sequelizeConnection = new Sequelize(dbName, dbUser, dbPassword, {
 sequelizeConnection.addModels([
   User,
   Roles,
-  UsersRoles,
+  UserRoles,
   UsersArticles,
   RolesPermissions,
   Permissions,
@@ -33,15 +33,15 @@ sequelizeConnection.addModels([
   ArticleInformation,
 ]);
 
-UsersRoles.belongsTo(Roles, {
-  as: "Roles",
-  foreignKey: "roleId",
-  keyType: DataType.UUID,
-});
-UsersRoles.belongsTo(User, {
-  as: "User",
-  foreignKey: "userId",
-  keyType: DataType.UUID,
-});
+// UsersRoles.belongsTo(Roles, {
+//   as: "Roles",
+//   foreignKey: "roleId",
+//   keyType: DataType.UUID,
+// });
+// UsersRoles.belongsTo(User, {
+//   as: "User",
+//   foreignKey: "userId",
+//   keyType: DataType.UUID,
+// });
 
 export default sequelizeConnection;

@@ -14,7 +14,7 @@ class Router {
     router.use("/api/v1/", PermissionsRouter);
     router.use("/api/v1/", ArticleRouter);
     router.use("*", () => {
-      throw new Error("Not Found!!!");
+      throw new Error("Not Found !!!");
     });
 
     return router;

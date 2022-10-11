@@ -9,23 +9,26 @@ import {
   Unique,
   BeforeSave,
   Validate,
-  BelongsToMany,
   Default,
+  CreatedAt,
+  UpdatedAt,
 } from "sequelize-typescript";
 import bcrypt from "bcrypt";
 import { hashPassword } from "../helpers/index";
 import ApplicationError from "../errors/ApplicationError";
 import { ERROR } from "../helpers/errors";
-import Roles from "./roles.dto";
-import UserRoles from "./users_roles.dto";
 
 type UserAttribute = {
   id: string;
   name: string;
+  username: string;
   password: string;
-  passwordCompare: string;
+  passwordcompare: string;
   email: string;
-  roles: Roles[];
+  created_at?: Date;
+  updated_at?: Date;
+  owner?: boolean;
+  enabled?: boolean;
 };
 
 @Table({ tableName: "users" })
@@ -39,23 +42,40 @@ export class User extends Model<UserAttribute> {
   @Unique(true)
   @AllowNull(false)
   @Column(DataType.STRING)
+  public username: string;
+
+  @Unique(true)
+  @AllowNull(false)
+  @Column(DataType.STRING)
   public name: string;
 
   @AllowNull(false)
   @Column(DataType.STRING)
   public password: string;
 
-  @AllowNull(false)
   @Column(DataType.STRING)
-  public passwordCompare: string;
+  public passwordcompare: string;
 
   @AllowNull(true)
   @Validate({ isEmail: true })
   @Column(DataType.STRING)
   public email: string;
 
-  @BelongsToMany(() => Roles, () => UserRoles)
-  public roles!: Roles[];
+  @CreatedAt
+  @Column(DataType.DATE)
+  public created_at: Date;
+
+  @UpdatedAt
+  @Column(DataType.DATE)
+  public updated_at: Date;
+
+  @Default(true)
+  @Column(DataType.BOOLEAN)
+  public owner: Date;
+
+  @Default(true)
+  @Column(DataType.BOOLEAN)
+  public enabled: Date;
 
   @BeforeSave
   static async hashPasswordBeforeUpdate(user: User) {
@@ -66,13 +86,13 @@ export class User extends Model<UserAttribute> {
   @BeforeSave
   static async comparePassword(user: User) {
     const decryptPassword = await bcrypt.compare(
-      user.passwordCompare,
+      user.passwordcompare,
       user.password
     );
     if (!decryptPassword)
       throw new ApplicationError(ERROR.ERROR_USER_PASSWORD_COMPARE_WRONG);
 
-    user.passwordCompare = user.password;
+    user.passwordcompare = user.password;
   }
 }
 
